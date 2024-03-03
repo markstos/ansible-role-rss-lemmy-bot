@@ -1,0 +1,29 @@
+---
+# From here: https://hub.docker.com/r/kensand/rss-lemmy-bot/tags
+# For stability, you might choose a specific digest instead of "latest", which might change or
+# break over time.
+rss_lemmy_bot_image_digest: latest
+# This will be written to rss-lemmy-bot's config.json
+# Docs: https://github.com/kensand/rss-lemmy-bot/tree/main?tab=readme-ov-file#configuration
+rss_lemmy_bot_config:
+  defaultSchedule:
+    hours: 1
+  lemmy:
+    login:
+      # Just a username, not @username@host.com
+      username_or_email: "changeme"
+      # Example of pulling the password out of password manager
+      password: "{{ lookup('community.general.onepassword', '@changeme@example.social') }}"
+    # URL of instance where you authenticate the bot.
+    instanceUrl: "https://example.social"
+  # A list of feeds to monitor and lemmy communities to post them to.
+  # These can different than the Lemmy instance you authenticate against.
+  feeds:
+    - feedUrl: "https://bloomingtonian.com/feed/"
+      # Schedule is optional, overriding the default.
+      schedule:
+        minutes: 30
+      lemmyCommunities:
+        # The part after /c/
+        - communityName: "my_community_to_post_to"
+          instanceUrl: "https://example-target.social"

@@ -1,0 +1,14 @@
+# MANAGED BY ANSIBLE
+[Unit]
+Description=RSS Lemmy Bot
+After=network-online.target
+
+[Container]
+ContainerName=rss-lemmy-bot
+Image=docker.io/kensand/rss-lemmy-bot@{{ rss_lemmy_bot_image_digest }}
+Volume=/etc/rss-lemmy-bot/config.json:/rss-lemmy-bot/config.json:ro
+RunInit=true
+
+[Install]
+WantedBy=network-online.target
+# vi:ft=systemd

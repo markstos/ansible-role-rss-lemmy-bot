@@ -1,0 +1,30 @@
+---
+- name: Ensure /etc/rss-lemmy-bot/ directory exists
+  ansible.builtin.file:
+    path: /etc/rss-lemmy-bot
+    state: directory
+    mode: "0755"
+
+- name: Render rss-lemmy-bot config to JSON file
+  ansible.builtin.copy:
+    content: "{{ rss_lemmy_bot_config | to_nice_json }}"
+    dest: "/etc/rss-lemmy-bot/config.json"
+
+- name: Copy rss-to-lemmy.container definition (podman quadlet file)
+  notify: Systemctl daemon-reload
+  ansible.builtin.template:
+    src: etc/containers/systemd/rss-lemmy-bot.container.j2
+    owner: root
+    dest: "/etc/containers/systemd/rss-lemmy-bot.container"
+    mode: "0644"
+
+- name: Reload systemd immediately to cause .service file to be generated.
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: Start RSS to Lemmy service
+  notify: Systemctl daemon-reload
+  ansible.builtin.systemd_service:
+    name: rss-to-lemmy
+    state: started
+    enabled: true
